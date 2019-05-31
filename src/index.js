@@ -6,7 +6,7 @@ const detectorRoute = require('./routes/detector')
 
 const PORT = process.env.PORT || 3000
 
-app.use(detectorRoute)
+app.use('/traffic', detectorRoute)
 app.use(express.static('public'))
 
 app.listen(PORT, () => {
