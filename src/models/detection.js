@@ -1,11 +1,24 @@
 
-const pgp = require('pg-promise')(/* options */)
-const db = pgp(process.env.DATABASE_URL)
+const mongoose = require('mongoose')
 
-db.one('SELECT $1 AS value', 123)
-  .then(function (data) {
-    console.log('DATA:', data.value)
-  })
-  .catch(function (error) {
-    console.log('ERROR:', error)
-  })
+const trafficSchema = mongoose.Schema({
+  _id: mongoose.Schema.Types.ObjectId,
+  pos: { 
+        type: String,
+        required: true
+  },
+  status: { 
+    type: String,
+    required: true
+},
+  density: { 
+    type: Number,
+    required: true
+},
+  count: { 
+    type: Number,
+    required: true
+}
+}) 
+
+module.exports = mongoose.model('TrafficSchema', trafficSchema)
