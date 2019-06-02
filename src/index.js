@@ -6,6 +6,7 @@ const morgan = require('morgan')
 const app = express()
 
 const detectorRoute = require('./routes/detector')
+const consumerRoute = require('./routes/consumer')
 const PORT = process.env.PORT || 3000
 const DATABASE_URI = require('../.env') || process.env.DATABASE_URI
 mongoose.connect(
@@ -17,6 +18,7 @@ app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json())
 
+app.use('/user', consumerRoute)
 app.use('/traffic', detectorRoute)
 app.use(express.static('public'))
 

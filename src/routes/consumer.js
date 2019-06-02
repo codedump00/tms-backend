@@ -2,18 +2,17 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const router = express.Router()
-const TrafficSchema = require('../models/models')
+const ConsumerSchema = require('../models/models')
 
 router.get('/', (req, res, next) => {
     res.status(200).json({
-        message:"You have requested traffic density..."
+        message:"You have requested consumer information."
     })
 })
 
 router.get('/:id/', (req, res, next) => {
     let id = req.params.id
-    console.log(id)
-    TrafficSchema.findById(id).exec().then(result => {
+    ConsumerSchema.findById(id).exec().then(result => {
         res.status(201).json({
             message: "Data successfully fetched",
             data: result
@@ -25,9 +24,9 @@ router.get('/:id/', (req, res, next) => {
     })
 })
 
-router.get('/location/:place/', (req, res, next) => {
-    let place = req.params.place
-    TrafficSchema.findOne({'pos':`${place}`}, 'status density count',
+router.get('/name/:userName/', (req, res, next) => {
+    let userName = req.params.userName
+    ConsumerSchema.findOne({'name':`${userName}`}, 'email token location',
         (err, data) => {
             if (data) {
                 res.status(201).json({
@@ -45,12 +44,12 @@ router.get('/location/:place/', (req, res, next) => {
 
 router.post('/', (req, res, next) => {
     try{
-        const traffic = TrafficSchema({
+        const traffic = ConsumerSchema({
             _id: new mongoose.Types.ObjectId(),
-            pos: req.body.pos,
-            status: req.body.status,
-            density: req.body.density,
-            count: req.body.count
+            name: req.body.name,
+            email: req.body.email,
+            token: req.body.token,
+            location: req.body.location
         })
         traffic.save().then(resp => {
             res.status(201).json({
@@ -70,18 +69,18 @@ router.post('/', (req, res, next) => {
     }
 })
 
-router.patch('/:location', (req, res, next) => {
+router.patch('/:userID', (req, res, next) => {
     res.status(200).json({
-        message: "Baneshwor chwok traffic info updated",
-        location: location
+        message: "User info updated",
+        id: req.params.userID
     })
 })
 
-router.delete('/:location', (req, res, next) => {
+router.delete('/:userID', (req, res, next) => {
     res.status(200).json({
-        message: "Baneshwor chwok traffic info deleted",
-        location: location
+        message: "user info deleted",
     })
 })
 
 module.exports = router
+
