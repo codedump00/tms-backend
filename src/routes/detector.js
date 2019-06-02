@@ -2,7 +2,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const router = express.Router()
-const TrafficSchema = require('../models/models')
+const TrafficSchema = require('../models/trafficModel')
 
 router.get('/', (req, res, next) => {
     res.status(200).json({
