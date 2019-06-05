@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose')
 
-const ConsumerSchema = mongoose.Schema({
+const UserSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: { 
           type: String,
@@ -23,4 +23,4 @@ const ConsumerSchema = mongoose.Schema({
   }
   }) 
 
-  module.exports = mongoose.model('ConsumerSchema', ConsumerSchema)
+  module.exports = mongoose.model('ConsumerSchema', UserSchema)

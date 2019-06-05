@@ -21,4 +21,4 @@ const TrafficSchema = mongoose.Schema({
 }
 }) 
 
-module.exports = mongoose.model('TrafficSchema', TrafficSchema)
+module.exports = mongoose.model('Traffic', TrafficSchema)

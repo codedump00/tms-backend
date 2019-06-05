@@ -7,8 +7,7 @@ const app = express()
 const detectorRoute = require("./routes/detector")
 const consumerRoute = require("./routes/consumer")
 const PORT = process.env.PORT || 3000
-const DATABASE_URI = require("../.env") || process.env.DATABASE_URI
-
+const DATABASE_URI  = process.env.DATABASE_URI
 /*Database connection*/
 
 mongoose
