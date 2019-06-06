@@ -1,7 +1,6 @@
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
 const express = require("express")
-const morgan = require("morgan")
 const app = express()
 
 const detectorRoute = require("./routes/traffic")
@@ -16,8 +15,10 @@ mongoose
 /*------------------*/
 
 /*Logging for dev environment*/
-if (PORT === 3000 || PORT === 5000)
-app.use(morgan("dev"))
+if (PORT === 3000 || PORT === 5000){
+  const morgan = require("morgan")
+  app.use(morgan("dev"))
+}
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
