@@ -1,62 +1,7 @@
-const express = require("express")
 const mongoose = require("mongoose")
-const router = express.Router()
 const Traffic = require("../models/traffic")
 
-router.get("/", (req, res, next) => {
-    Traffic.find()
-        .exec()
-        .then(trafficDetails => {
-            // if (trafficDetails.length > 0) {
-            res.status(200).json(trafficDetails)
-            // } else {
-            //     res.status(404).json({
-            //         message: "No entries found"
-            //     })
-            // }
-        })
-})
-
-router.get("/:id/", (req, res, next) => {
-    let id = req.params.id
-    console.log(id)
-    Traffic.findById(id)
-        .exec()
-        .then(result => {
-            res.status(201).json({
-                message: "Data successfully fetched",
-                data: result
-            })
-        })
-        .catch(err => {
-            res.status(400).json({
-                message: "Resource fetch failed"
-            })
-        })
-})
-
-router.get("/location/:place/", (req, res, next) => {
-    let place = req.params.place
-    Traffic.findOne(
-        { pos: `${place}` },
-        "status density count",
-        (err, data) => {
-            if (data) {
-                res.status(201).json({
-                    message: "Data successfully fetched",
-                    data: data
-                })
-                return
-            }
-            res.status(400).json({
-                message: "Resource fetch failed",
-                error: err
-            })
-        }
-    ).exec()
-})
-
-router.post("/", (req, res, next) => {
+exports.saveTraffic = (req, res, next) => {
     try {
         const traffic = Traffic({
             _id: new mongoose.Types.ObjectId(),
@@ -84,9 +29,62 @@ router.post("/", (req, res, next) => {
             data: req.body
         })
     }
-})
+}
 
-router.patch("/:id", (req, res, next) => {
+exports.getEveryLoc = (req, res, next) => {
+    Traffic.find()
+        .exec()
+        .then(trafficDetails => {
+            // if (trafficDetails.length > 0) {
+            res.status(200).json(trafficDetails)
+            // } else {
+            //     res.status(404).json({
+            //         message: "No entries found"
+            //     })
+            // }
+        })
+}
+
+exports.getLocByID = (req, res, next) => {
+    let id = req.params.id
+    console.log(id)
+    Traffic.findById(id)
+        .exec()
+        .then(result => {
+            res.status(201).json({
+                message: "Data successfully fetched",
+                data: result
+            })
+        })
+        .catch(err => {
+            res.status(400).json({
+                message: "Resource fetch failed"
+            })
+        })
+}
+
+exports.getLocByName = (req, res, next) => {
+    let place = req.params.place
+    Traffic.findOne(
+        { pos: `${place}` },
+        "status density count",
+        (err, data) => {
+            if (data) {
+                res.status(201).json({
+                    message: "Data successfully fetched",
+                    data: data
+                })
+                return
+            }
+            res.status(400).json({
+                message: "Resource fetch failed",
+                error: err
+            })
+        }
+    ).exec()
+}
+
+exports.updateTraffic = (req, res, next) => {
     const id = req.params.id
     const updateData = {}
     for (const data of req.body) {
@@ -102,9 +100,9 @@ router.patch("/:id", (req, res, next) => {
                 error: err
             })
         })
-})
+}
 
-router.delete("/:id", (req, res, next) => {
+exports.deleteTrafficInfo = (req, res, next) => {
     const id = req.params.id
     Traffic.remove({ _id: id })
         .exec()
@@ -120,6 +118,4 @@ router.delete("/:id", (req, res, next) => {
                 error: err
             })
         })
-})
-
-module.exports = router
+}

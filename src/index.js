@@ -4,8 +4,8 @@ const express = require("express")
 const morgan = require("morgan")
 const app = express()
 
-const detectorRoute = require("./routes/detector")
-const consumerRoute = require("./routes/consumer")
+const detectorRoute = require("./routes/traffic")
+const consumerRoute = require("./routes/user")
 const PORT = process.env.PORT || 3000
 const DATABASE_URI  = process.env.DATABASE_URI
 /*Database connection*/
