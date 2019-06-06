@@ -16,8 +16,9 @@ mongoose
 /*------------------*/
 
 /*Logging for dev environment*/
-
+if (PORT === 3000 || PORT === 5000)
 app.use(morgan("dev"))
+
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 /*---------------------------*/
