@@ -22,15 +22,15 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 /*---------------------------*/
 
+/*Static file serving */
+
+app.use(express.static("public"))
+/*------------------*/
+
 /*Route Declaration*/
 
 app.use("/user", consumerRoute)
 app.use("/traffic", detectorRoute)
-/*------------------*/
-
-/*Static file serving */
-
-app.use(express.static("public"))
 /*------------------*/
 
 /*Error Handlers*//
