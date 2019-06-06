@@ -50,65 +50,71 @@ exports.signUpController = (req, res, next) => {
 }
 
 exports.loginController = (req, res, next) => {
+    console.log(1)
     userSchema
-        .findOne(
-            { email: req.body.email },
-            "name token location",
-            (err, data) => {
-                if (err) {
-                    res.status(401).json({
-                        message: "Auth failed"
-                    })
-                }
-                if (data) {
-                    bcrypt.compare(
-                        req.body.password,
-                        data.password,
-                        (err, result) => {
-                            if (err)
-                                return res.status(401).json({
-                                    message: "Auth failed"
-                                })
-                            if (result) {
-                                const tok = jwt.sign(
-                                    {
-                                        email: data.email,
-                                        userId: data._id
-                                    },
-                                    process.env.JWT_SECRET,
-                                    {
-                                        expiresIn: "7d"
-                                    }
-                                )
-                                return res.status(200).json({
-                                    message: "Auth successful",
-                                    token: tok
-                                })
-                            }
-                        }
-                    )
-                }
+        .findOne({ email: req.body.email }, "name password", (err, data) => {
+            if (err) {
+                return res.status(401).json({
+                    message: "Auth failed"
+                })
             }
-        )
-        .exec()
-}
-
-exports.findByID = (req, res, next) => {
-    let id = req.params.id
-    userSchema
-        .findById(id)
-        .exec()
-        .then(result => {
-            if (result.password === req.params.password) {
-                let data = ({ _id, name, email, token, location } = result)
-                res.status(201).json({
-                    message: "Data successfully fetched",
-                    data: data
+            if (data) {
+                bcrypt.compare(
+                    req.body.password,
+                    data.password,
+                    (err, result) => {
+                        if (err)
+                            return res.status(401).json({
+                                message: "Auth failed"
+                            })
+                        if (result) {
+                            const tok = jwt.sign(
+                                {
+                                    email: data.email,
+                                    userId: data._id
+                                },
+                                process.env.JWT_SECRET,
+                                {
+                                    expiresIn: "1d"
+                                }
+                            )
+                            return res.status(200).json({
+                                message: "Auth successful",
+                                token: tok
+                            })
+                        } else {
+                            return res.status(401).json({
+                                message: "Auth failed"
+                            })
+                        }
+                    }
+                )
+            } else {
+                return res.status(401).json({
+                    message: "Auth failed"
                 })
             }
         })
+        .exec()
         .catch(err => {
-            res.status(400).json({
+            return res.status(401).json({
+                message: "Auth failed"
+            })
+        })
+}
+
+exports.findByID = (req, res, next) => {
+    userSchema
+        .findById(req.params.id)
+        .exec()
+        .then(result => {
+            return res.status(201).json({
+                message: "Data successfully fetched",
+                data: result
+            })
+        })
+        .catch(err => {
+            return res.status(400).json({
                 message: "Resource fetch failed"
             })
         })
