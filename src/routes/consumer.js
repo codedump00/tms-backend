@@ -1,6 +1,7 @@
 const express = require("express")
 const mongoose = require("mongoose")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 const router = express.Router()
 const userSchema = require("../models/user")
 
@@ -55,23 +56,44 @@ router.get("/name/:userName/", (req, res, next) => {
 })
 
 router.post("/login/", (req, res, next) => {
-    let userName = req.body.name
     userSchema
         .findOne(
-            { name: `${userName}` },
-            "email token location",
+            { email: req.body.email },
+            "name token location",
             (err, data) => {
-                if (data) {
-                    res.status(201).json({
-                        message: "Data successfully fetched",
-                        data: data
+                if (err) {
+                    res.status(401).json({
+                        message: "Auth failed"
                     })
-                    return
                 }
-                res.status(400).json({
-                    message: "Resource fetch failed",
-                    error: err
-                })
+                if (data) {
+                    bcrypt.compare(
+                        req.body.password,
+                        data.password,
+                        (err, result) => {
+                            if (err)
+                                return res.status(401).json({
+                                    message: "Auth failed"
+                                })
+                            if (result) {
+                                const tok = jwt.sign(
+                                    {
+                                        email: data.email,
+                                        userId: data._id
+                                    },
+                                    process.env.JWT_SECRET,
+                                    {
+                                        expiresIn: "7d"
+                                    }
+                                )
+                                return res.status(200).json({
+                                    message: "Auth successful",
+                                    token: tok
+                                })
+                            }
+                        }
+                    )
+                }
             }
         )
         .exec()
@@ -131,9 +153,22 @@ router.patch("/:userID/", (req, res, next) => {
 })
 
 router.delete("/:userID/", (req, res, next) => {
-    res.status(200).json({
-        message: "user info deleted"
-    })
+    userSchema
+        .remove({
+            _id: req.params.userID
+        })
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: "User deleted"
+            })
+        })
+        .catch(err => {
+            res.status(400).json({
+                message: "Required parameter not supplied properly",
+                error: err
+            })
+        })
 })
 
 module.exports = router
