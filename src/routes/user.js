@@ -8,7 +8,7 @@ const uController = require('../controllers/user')
 router.get("/name/:userName/", uController.findByUName)
 router.get("/:id/", uController.findByID)
 
-router.post("/signup", uController.signUpController)
+router.post("/signup/", uController.signUpController)
 router.post("/login/", uController.loginController)
 
 router.patch("/:userID/", uController.patchByID)

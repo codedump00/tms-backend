@@ -32,16 +32,16 @@ exports.saveTraffic = (req, res, next) => {
 }
 
 exports.getEveryLoc = (req, res, next) => {
-    Traffic.find()
+    console.log(1)
+    Traffic.find({})
         .exec()
         .then(trafficDetails => {
-            // if (trafficDetails.length > 0) {
-            res.status(200).json(trafficDetails)
-            // } else {
-            //     res.status(404).json({
-            //         message: "No entries found"
-            //     })
-            // }
+            if (trafficDetails.length > 0)
+                return res.status(200).json(trafficDetails)
+
+            return res.status(404).json({
+                message: "No entries found"
+            })
         })
 }
 
