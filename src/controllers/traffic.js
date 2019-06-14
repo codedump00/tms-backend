@@ -32,7 +32,6 @@ exports.saveTraffic = (req, res, next) => {
 }
 
 exports.getEveryLoc = (req, res, next) => {
-    console.log(1)
     Traffic.find({})
         .exec()
         .then(trafficDetails => {
@@ -64,11 +63,11 @@ exports.getLocByID = (req, res, next) => {
 }
 
 exports.getLocByName = (req, res, next) => {
-    let place = req.params.place
     Traffic.findOne(
-        { pos: `${place}` },
+        { pos: req.params.place },
         "status density count",
         (err, data) => {
+            console.log(data, err)
             if (data) {
                 res.status(201).json({
                     message: "Data successfully fetched",

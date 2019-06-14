@@ -13,6 +13,7 @@ exports.signUpController = (req, res, next) => {
                     return res.status(409).json({
                         message: "email exists"
                     })
+                    
                 const hash = bcrypt.hash(req.body.password, 10, (err, hash) => {
                     if (err) {
                         return res.status(500).json({
