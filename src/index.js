@@ -5,6 +5,7 @@ const app = express()
 
 const detectorRoute = require("./routes/traffic")
 const consumerRoute = require("./routes/user")
+
 const PORT = process.env.PORT || 3000
 const DATABASE_URI  = process.env.DATABASE_URI
 /*Database connection*/

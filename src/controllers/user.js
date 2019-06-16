@@ -129,7 +129,7 @@ exports.findByID = (req, res, next) => {
 
 exports.findByUName = (req, res, next) => {
     let userName = req.params.userName
-    User.findOne({ name: `${userName}` }, "email token", (err, data) => {
+    User.findOne({ name: `${userName}` }, "email name", (err, data) => {
         if (data) {
             res.status(201).json({
                 message: "Data successfully fetched",
@@ -145,10 +145,18 @@ exports.findByUName = (req, res, next) => {
 }
 
 exports.patchByID = (req, res, next) => {
-    res.status(200).json({
-        message: "User info updated",
-        id: req.params.userID
-    })
+    if (req.body.length > 0)
+        User.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true },
+            (err, location) => {
+                if (err) return res.status(500).send(err)
+                return res.status(200).json({
+                    message: "Profile updated successfully."
+                })
+            }
+        )
 }
 
 exports.deleteUser = (req, res, next) => {
@@ -186,7 +194,6 @@ exports.getLocation = (req, res, next) => {
 }
 
 exports.setLocation = (req, res, next) => {
-    console.log(req.body)
     User.findByIdAndUpdate(
         req.params.id,
         req.body,
@@ -194,7 +201,7 @@ exports.setLocation = (req, res, next) => {
         (err, location) => {
             if (err) return res.status(500).send(err)
             return res.status(200).json({
-                message:"location updated successfully."
+                message: "location updated successfully."
             })
         }
     )

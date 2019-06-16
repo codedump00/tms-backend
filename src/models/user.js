@@ -16,9 +16,6 @@ const User = mongoose.Schema({
         type: String,
         required: true
     },
-    token: {
-        type: String
-    },
     location: {
         type: String,
         default: ""
