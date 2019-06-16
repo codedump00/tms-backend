@@ -1,28 +1,28 @@
+const mongoose = require("mongoose")
 
-const mongoose = require('mongoose')
-
-const UserSchema = mongoose.Schema({
+const User = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    name: { 
-          type: String,
-          required: true
+    name: {
+        type: String,
+        required: true
     },
-    email: { 
-      type: String,
-      required: true,
-      unique: true,
-      match: /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/
-  },
-    password: { 
-      type: String,
-      required: true
-  },
-    token: { 
-      type: String
-  },
-  location: {
-    type: String
-  }
-  }) 
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        match: /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    token: {
+        type: String
+    },
+    location: {
+        type: String,
+        default: ""
+    }
+})
 
-  module.exports = mongoose.model('ConsumerSchema', UserSchema)
+module.exports = mongoose.model("ConsumerSchema", User)

@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose')
 
-const TrafficSchema = mongoose.Schema({
+const Traffic = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   pos: { 
         type: String,
@@ -21,4 +21,4 @@ const TrafficSchema = mongoose.Schema({
 }
 }) 
 
-module.exports = mongoose.model('Traffic', TrafficSchema)
+module.exports = mongoose.model('Traffic', Traffic)

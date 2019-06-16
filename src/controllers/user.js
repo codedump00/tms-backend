@@ -1,59 +1,69 @@
 const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken")
-const userSchema = require("../models/user")
+const User = require("../models/user")
 const bcrypt = require("bcrypt")
 
 exports.signUpController = (req, res, next) => {
-    try {
-        userSchema
-            .find({ email: req.body.email })
-            .exec()
-            .then(user => {
-                if (user.length > 0)
-                    return res.status(409).json({
-                        message: "email exists"
-                    })
-                    
-                const hash = bcrypt.hash(req.body.password, 10, (err, hash) => {
-                    if (err) {
-                        return res.status(500).json({
-                            error: err
+    if (req.body.email && req.body.name && req.body.password) {
+        try {
+            User.find({ email: req.body.email })
+                .exec()
+                .then(user => {
+                    if (user.length > 0)
+                        return res.status(409).json({
+                            message: "Account creation failed. User exists."
                         })
-                    } else {
-                        const user = userSchema({
-                            _id: new mongoose.Types.ObjectId(),
-                            name: req.body.name,
-                            email: req.body.email,
-                            password: hash
-                        })
-                        user.save()
-                            .then(resp => {
-                                res.status(201).json({
-                                    message: "User Created",
-                                    response: resp._id
+
+                    const hash = bcrypt.hash(
+                        req.body.password,
+                        10,
+                        (err, hash) => {
+                            if (err) {
+                                return res.status(500).json({
+                                    error: err
                                 })
-                            })
-                            .catch(err => {
-                                res.status(400).json({
-                                    message:
-                                        "Required parameter not supplied properly"
+                            } else {
+                                const user = User({
+                                    _id: new mongoose.Types.ObjectId(),
+                                    name: req.body.name,
+                                    email: req.body.email,
+                                    password: hash
                                 })
-                            })
-                    }
+                                user.save()
+                                    .then(resp => {
+                                        res.status(201).json({
+                                            message: "User Created"
+                                        })
+                                    })
+                                    .catch(err => {
+                                        res.status(400).json({
+                                            message:
+                                                "Required parameter not supplied properly"
+                                        })
+                                    })
+                            }
+                        }
+                    )
                 })
+        } catch {
+            res.status(200).json({
+                message: "Sign up failed!",
+                data: req.body
             })
-    } catch {
-        res.status(200).json({
-            message: "Location unavailable ...",
-            data: req.body
+        }
+    } else {
+        res.status(400).json({
+            message: "Required parameter not supplied properly"
         })
     }
 }
 
 exports.loginController = (req, res, next) => {
     console.log(1)
-    userSchema
-        .findOne({ email: req.body.email }, "name password", (err, data) => {
+    User.findOne(
+        { email: req.body.email },
+        "name password _id",
+        (err, data) => {
             if (err) {
                 return res.status(401).json({
                     message: "Auth failed"
@@ -81,7 +91,8 @@ exports.loginController = (req, res, next) => {
                             )
                             return res.status(200).json({
                                 message: "Auth successful",
-                                token: tok
+                                token: tok,
+                                id: data._id
                             })
                         } else {
                             return res.status(401).json({
@@ -95,7 +106,8 @@ exports.loginController = (req, res, next) => {
                     message: "Auth failed"
                 })
             }
-        })
+        }
+    )
         .exec()
         .catch(err => {
             return res.status(401).json({
@@ -105,43 +117,31 @@ exports.loginController = (req, res, next) => {
 }
 
 exports.findByID = (req, res, next) => {
-    userSchema
-        .findById(req.params.id)
-        .exec()
-        .then(result => {
-            return res.status(201).json({
-                message: "Data successfully fetched",
-                data: result
-            })
+    User.findById(req.params.id, (err, data) => {
+        if (err) return res.status(500).send(err)
+        return res.status(200).send({
+            name: data.name,
+            email: data.email,
+            location: data.location
         })
-        .catch(err => {
-            return res.status(400).json({
-                message: "Resource fetch failed"
-            })
-        })
+    })
 }
 
 exports.findByUName = (req, res, next) => {
     let userName = req.params.userName
-    userSchema
-        .findOne(
-            { name: `${userName}` },
-            "email token location",
-            (err, data) => {
-                if (data) {
-                    res.status(201).json({
-                        message: "Data successfully fetched",
-                        data: data
-                    })
-                    return
-                }
-                res.status(400).json({
-                    message: "Resource fetch failed",
-                    error: err
-                })
-            }
-        )
-        .exec()
+    User.findOne({ name: `${userName}` }, "email token", (err, data) => {
+        if (data) {
+            res.status(201).json({
+                message: "Data successfully fetched",
+                data: data
+            })
+            return
+        }
+        res.status(400).json({
+            message: "Resource fetch failed",
+            error: err
+        })
+    }).exec()
 }
 
 exports.patchByID = (req, res, next) => {
@@ -152,10 +152,9 @@ exports.patchByID = (req, res, next) => {
 }
 
 exports.deleteUser = (req, res, next) => {
-    userSchema
-        .remove({
-            _id: req.params.userID
-        })
+    User.remove({
+        _id: req.params.userID
+    })
         .exec()
         .then(result => {
             res.status(200).json({
@@ -168,4 +167,35 @@ exports.deleteUser = (req, res, next) => {
                 error: err
             })
         })
+}
+
+exports.getLocation = (req, res, next) => {
+    User.findOne({ _id: `${req.params.id}` }, "location", (err, data) => {
+        if (data) {
+            res.status(201).json({
+                message: "Location successfully fetched",
+                data: data
+            })
+            return
+        }
+        res.status(400).json({
+            message: "Resource fetch failed",
+            error: err
+        })
+    }).exec()
+}
+
+exports.setLocation = (req, res, next) => {
+    console.log(req.body)
+    User.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true },
+        (err, location) => {
+            if (err) return res.status(500).send(err)
+            return res.status(200).json({
+                message:"location updated successfully."
+            })
+        }
+    )
 }
