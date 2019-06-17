@@ -9,8 +9,8 @@ router.get("/location/:place/", tController.getLocByName)
 
 router.post("/", tController.saveTraffic)
 
-router.patch("/:id", tController.updateTraffic)
+router.put("/:id/", tController.updateTraffic)
 
-router.delete("/:id", tController.deleteTrafficInfo)
+router.delete("/:id/", tController.deleteTrafficInfo)
 
 module.exports = router
