@@ -2,6 +2,7 @@ const mongoose = require("mongoose")
 const Traffic = require("../models/traffic")
 
 exports.saveTraffic = (req, res, next) => {
+    console.log(req)
     try {
         const traffic = Traffic({
             _id: new mongoose.Types.ObjectId(),
@@ -15,11 +16,11 @@ exports.saveTraffic = (req, res, next) => {
                 return res.status(400).json({
                     message: "failed to save data."
                 })
-            if (data.pos === req.body.pos)
+            if (data) {
                 return res.status(400).json({
                     message: "Entry already exists."
                 })
-            else
+            } else
                 traffic
                     .save()
                     .then(resp => {

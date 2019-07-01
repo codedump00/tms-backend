@@ -7,20 +7,20 @@ const detectorRoute = require("./routes/traffic")
 const consumerRoute = require("./routes/user")
 
 const PORT = process.env.PORT || 3000
-const DATABASE_URI  = process.env.DATABASE_URI
+const DATABASE_URI = process.env.DATABASE_URI
 /*Database connection*/
 
 mongoose
-  .connect(DATABASE_URI, { useNewUrlParser: true })
-  .catch(err => console.log(err))
+    .connect(DATABASE_URI, { useNewUrlParser: true })
+    .catch(err => console.log(err))
 /*------------------*/
 /*Logging for dev environment*/
-if (PORT === 3000 || PORT === 5000){
-  const morgan = require("morgan")
-  app.use(morgan("dev"))
+if (PORT === 3000 || PORT === 5000) {
+    const morgan = require("morgan")
+    app.use(morgan("dev"))
 }
 /*---------------------------*/
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 /*---------------------------*/
 /*Static file serving */
@@ -28,23 +28,21 @@ app.use(express.static("public"))
 /*------------------*/
 /*Route Declaration*/
 app.use("/user", consumerRoute)
-app.use("/traffic", detectorRoute)
-/*------------------*/
-/*Error Handlers*//
-app.use((req, res, next) => {
-  let err = new Error("Query not found")
-  err.status = 404
-  next(err)
-})
+app.use("/traffic", detectorRoute) /
+    /*------------------*/
+    /*Error Handlers*/ app.use((req, res, next) => {
+        let err = new Error("Query not found")
+        err.status = 404
+        next(err)
+    })
 app.use((error, req, res, next) => {
-  res.status(error.status || 500)
-  res.json({
-    error: {
-      message: error.message
-    }
-  })
+    return res.status(error.status || 500).json({
+        error: {
+            message: error.message
+        }
+    })
 })
 /*----------------*/
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}...`)
+    console.log(`Server started on port ${PORT}...`)
 })
