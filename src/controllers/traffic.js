@@ -2,36 +2,43 @@ const mongoose = require("mongoose")
 const Traffic = require("../models/traffic")
 
 exports.saveTraffic = (req, res, next) => {
-    const traffic = Traffic({
-        _id: new mongoose.Types.ObjectId(),
-        pos: req.body.pos,
-        status: req.body.status,
-        density: req.body.density,
-        count: req.body.count
-    })
-    Traffic.findOne({ pos: req.body.pos }, "pos", (err, data) => {
-        if (err)
-            return res.status(400).json({
-                message: "failed to save data."
-            })
-        if (data.pos === req.body.pos)
-            return res.status(400).json({
-                message: "Entry already exists."
-            })
-        else
-            traffic
-                .save()
-                .then(resp => {
-                    res.status(201).json({
-                        message: "Data received succesfully"
-                    })
+    try {
+        const traffic = Traffic({
+            _id: new mongoose.Types.ObjectId(),
+            pos: req.body.pos,
+            status: req.body.status,
+            density: req.body.density,
+            count: req.body.count
+        })
+        Traffic.findOne({ pos: req.body.pos }, "pos", (err, data) => {
+            if (err)
+                return res.status(400).json({
+                    message: "failed to save data."
                 })
-                .catch(err => {
-                    res.status(400).json({
-                        message: "Required parameter not supplied properly"
-                    })
+            if (data.pos === req.body.pos)
+                return res.status(400).json({
+                    message: "Entry already exists."
                 })
-    })
+            else
+                traffic
+                    .save()
+                    .then(resp => {
+                        res.status(201).json({
+                            message: "Data received succesfully"
+                        })
+                    })
+                    .catch(err => {
+                        res.status(400).json({
+                            message: "Required parameter not supplied properly"
+                        })
+                    })
+        })
+    } catch (err) {
+        res.status(400).json({
+            message: "Required parameter not supplied properly",
+            error: err
+        })
+    }
 }
 
 exports.getEveryLoc = (req, res, next) => {
@@ -85,7 +92,7 @@ exports.getLocByName = (req, res, next) => {
 
 exports.updateTraffic = (req, res, next) => {
     Traffic.findOneAndUpdate(
-        {_id: req.params.id},
+        { _id: req.params.id },
         req.body,
         { new: true },
         (err, location) => {

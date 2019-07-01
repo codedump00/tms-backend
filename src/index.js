@@ -14,40 +14,23 @@ mongoose
   .connect(DATABASE_URI, { useNewUrlParser: true })
   .catch(err => console.log(err))
 /*------------------*/
-
 /*Logging for dev environment*/
 if (PORT === 3000 || PORT === 5000){
   const morgan = require("morgan")
   app.use(morgan("dev"))
 }
-
+/*---------------------------*/
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 /*---------------------------*/
-
-// app.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Origin', '*')
-//   res.header('Access-Control-Allow-Headers',
-//   'Origin, X-Requested-With,Content-Type, Accept, Authorization')
-//   if(req.method === 'OPTIONS'){
-//       res.header('Access-Control-Allow-Methods', 'PUT', 'POST', 'PATCH', 'DELETE', 'GET')
-//       return res.status(200).json({})
-//   }
-// })
-
 /*Static file serving */
-
 app.use(express.static("public"))
 /*------------------*/
-
 /*Route Declaration*/
-
 app.use("/user", consumerRoute)
 app.use("/traffic", detectorRoute)
 /*------------------*/
-
 /*Error Handlers*//
-
 app.use((req, res, next) => {
   let err = new Error("Query not found")
   err.status = 404
@@ -62,7 +45,6 @@ app.use((error, req, res, next) => {
   })
 })
 /*----------------*/
-
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}...`)
 })
