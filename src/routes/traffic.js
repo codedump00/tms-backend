@@ -1,16 +1,16 @@
 const express = require("express")
 const router = express.Router()
 
-const tController = require("../controllers/traffic")
+const controller = require("../controllers/traffic")
 
-router.get("/", tController.getEveryLoc)
-router.get("/:id/", tController.getLocByID)
-router.get("/location/:place/", tController.getLocByName)
+router.get("/", controller.getAll)
+router.get("/:id/", controller.getById)
+router.get("/location/:place/", controller.getByName)
 
-router.post("/", tController.saveTraffic)
+router.post("/", controller.save)
 
-router.put("/:id/", tController.updateTraffic)
+router.put("/:id/", controller.update)
 
-router.delete("/:id/", tController.deleteTrafficInfo)
+router.delete("/:id/", controller.delete)
 
 module.exports = router

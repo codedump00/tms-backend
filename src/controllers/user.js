@@ -177,32 +177,28 @@ exports.deleteUser = (req, res, next) => {
         })
 }
 
-exports.getLocation = (req, res, next) => {
-    User.findOne({ _id: `${req.params.id}` }, "location", (err, data) => {
-        if (data) {
-            res.status(201).json({
-                message: "Location successfully fetched",
-                data: data
-            })
-            return
-        }
-        res.status(400).json({
-            message: "Resource fetch failed",
-            error: err
+exports.getLocation = async (req, res, next) => {
+    try {
+        const location = User.findOne({ _id: req.params.id }, "location")
+        return res.status(200).json({
+            result: location
         })
-    }).exec()
+    } catch {
+        return res.status(400).json({
+            error: "Resource fetch failed"
+        })
+    }
 }
 
-exports.setLocation = (req, res, next) => {
-    User.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true },
-        (err, location) => {
-            if (err) return res.status(500).send(err)
-            return res.status(200).json({
-                message: "location updated successfully."
-            })
-        }
-    )
+exports.setLocation = async (req, res, next) => {
+    try {
+        const update = await User.findByIdAndUpdate(req.params.id, req.body)
+        return res.status(200).json({
+            result: "location updated successfully."
+        })
+    } catch {
+        return res.status(500).json({
+            error: "Error ocurred!"
+        })
+    }
 }
