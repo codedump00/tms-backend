@@ -3,18 +3,18 @@ const AuthMiddleWare = require("../middlewares/auth")
 
 const router = express.Router()
 
-const uController = require("../controllers/user")
+const controller = require("../controllers/user")
 
-router.get("/name/:userName/", AuthMiddleWare, uController.findByUName)
-router.get("/:id/", AuthMiddleWare, uController.findByID)
-router.get("/:id/location/", AuthMiddleWare, uController.getLocation)
+router.get("/name/:userName/", AuthMiddleWare, controller.findByUName)
+router.get("/:id/", AuthMiddleWare, controller.findByID)
+router.get("/:id/location/", AuthMiddleWare, controller.getLocation)
 
-router.post("/signup/", uController.signUpController)
-router.post("/login/", uController.loginController)
+router.post("/signup/", controller.signup)
+router.post("/login/", controller.login)
 
-router.put("/:id/location/", AuthMiddleWare, uController.setLocation)
-router.put("/:userID/", AuthMiddleWare, uController.patchByID)
+router.put("/:id/location/", AuthMiddleWare, controller.setLocation)
+router.put("/:userID/", AuthMiddleWare, controller.patchByID)
 
-router.delete("/:userID/", AuthMiddleWare, uController.deleteUser)
+router.delete("/:userID/", AuthMiddleWare, controller.delete)
 
 module.exports = router
