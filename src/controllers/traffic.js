@@ -47,7 +47,7 @@ const getEveryLoc = async (req, res, next) => {
 const getLocByID = async (req, res, next) => {
     try {
         return res.status(201).json({
-            result: await Traffic.findById(req.params.id)
+            result: await Traffic.findById(req.trafficId)
         })
     } catch {
         return res.status(400).json({
@@ -71,9 +71,9 @@ const getLocByName = async (req, res, next) => {
 
 const updateTraffic = async (req, res, next) => {
     try {
-        const update = await Traffic.findByIdAndUpdate(_id, req.body)
+        const update = await Traffic.updateOne({ _id: req.trafficId }, req.body)
         return res.status(201).json({
-            result: update
+            result: "Updated traffic info!"
         })
     } catch {
         return res.status(500).json({
@@ -84,7 +84,7 @@ const updateTraffic = async (req, res, next) => {
 
 const deleteTrafficInfo = async (req, res, next) => {
     try {
-        await Traffic.remove({ _id: req.params.id })
+        await Traffic.deleteOne({ _id: req.trafficId })
         return res.status(200).json({
             message: "Traffic entry deleted."
         })

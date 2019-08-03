@@ -1,15 +1,34 @@
 const jwt = require("jsonwebtoken")
+const Traffic = require("../models/traffic")
 
-const AuthMiddleWare = (req, res, next) => {
+const UserVerification = (req, res, next) => {
     try {
-        const decoded = jwt.verify(req.get('x-access-token'), process.env.JWT_SECRET)
+        const decoded = jwt.verify(
+            req.get("x-access-token"),
+            process.env.JWT_SECRET
+        )
         req.user = decoded
         next()
-    } catch (err) {
+    } catch {
         return res.status(401).json({
-            message: "Auth failed"
+            error: "Auth failed"
         })
     }
 }
 
-module.exports = AuthMiddleWare
+const TrafficVerification = async (req, res, next) => {
+    try {
+        const id = req.get("x-access-id")
+        req.trafficId = id
+        next()
+    } catch {
+        return res.status(401).json({
+            error: "Verification failed"
+        })
+    }
+}
+
+module.exports = {
+    userAuth: UserVerification,
+    trafficAuth: TrafficVerification
+}
