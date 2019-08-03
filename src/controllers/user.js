@@ -22,9 +22,9 @@ exports.signup = async (req, res, next) => {
         return res.status(201).json({
             message: "User Created"
         })
-    } catch {
+    } catch (err) {
         res.status(400).json({
-            message: "Sign up failed!"
+            error: "Sign up failed! Parameters not supplied properly."
         })
     }
 }
@@ -60,9 +60,9 @@ exports.login = async (req, res, next) => {
     }
 }
 
-exports.findByID = (req, res, next) => {
+exports.findByID = async (req, res, next) => {
     try {
-        const user = User.findById(req.params.id)
+        const user = await User.findById(req.user.userId)
         return res.status(200).send({
             result: {
                 name: user.name,
@@ -79,12 +79,12 @@ exports.findByID = (req, res, next) => {
 
 exports.findByUName = async (req, res, next) => {
     try {
-        const user = await User.findOne(
-            { name: req.params.userName },
-            "email name"
-        )
+        const user = await User.findOne({ name: req.params.name })
         return res.status(201).json({
-            result: user
+            result: {
+                name: user.name,
+                email: user.email
+            }
         })
     } catch {
         return res.status(400).json({
@@ -95,7 +95,7 @@ exports.findByUName = async (req, res, next) => {
 
 exports.patchByID = async (req, res, next) => {
     try {
-        await User.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        await User.updateOne({ _id: req.user.userId }, req.body)
         return res.status(200).json({
             message: "Profile updated successfully."
         })
@@ -108,7 +108,7 @@ exports.patchByID = async (req, res, next) => {
 
 exports.delete = async (req, res, next) => {
     try {
-        await User.deleteOne({ _id: req.params.id })
+        await User.deleteOne({ _id: req.user.userId })
         return res.status(200).json({
             message: "User deleted"
         })
@@ -121,7 +121,10 @@ exports.delete = async (req, res, next) => {
 
 exports.getLocation = async (req, res, next) => {
     try {
-        const location = User.findOne({ _id: req.params.id }, "location")
+        const location = await User.findOne(
+            { _id: req.user.userId },
+            "location"
+        )
         return res.status(200).json({
             result: location
         })
@@ -134,9 +137,14 @@ exports.getLocation = async (req, res, next) => {
 
 exports.setLocation = async (req, res, next) => {
     try {
-        const update = await User.findByIdAndUpdate(req.params.id, req.body)
+        const update = await User.updateOne(
+            { _id: req.user.userId },
+            {
+                location: req.body.location
+            }
+        )
         return res.status(200).json({
-            result: "location updated successfully."
+            message: "location updated successfully."
         })
     } catch {
         return res.status(500).json({

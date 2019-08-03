@@ -5,16 +5,16 @@ const router = express.Router()
 
 const controller = require("../controllers/user")
 
-router.get("/name/:userName/", AuthMiddleWare, controller.findByUName)
-router.get("/:id/", AuthMiddleWare, controller.findByID)
-router.get("/:id/location/", AuthMiddleWare, controller.getLocation)
+router.get("/name/:name/", AuthMiddleWare, controller.findByUName)
+router.get("/", AuthMiddleWare, controller.findByID)
+router.get("/location/", AuthMiddleWare, controller.getLocation)
 
 router.post("/signup/", controller.signup)
 router.post("/login/", controller.login)
 
-router.put("/:id/location/", AuthMiddleWare, controller.setLocation)
-router.put("/:userID/", AuthMiddleWare, controller.patchByID)
+router.put("/location/", AuthMiddleWare, controller.setLocation)
+router.put("/", AuthMiddleWare, controller.patchByID)
 
-router.delete("/:userID/", AuthMiddleWare, controller.delete)
+router.delete("/", AuthMiddleWare, controller.delete)
 
 module.exports = router

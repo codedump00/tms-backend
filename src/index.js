@@ -1,30 +1,33 @@
-const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
 const express = require("express")
 const helmet = require("helmet")
+const cors = require("cors")
 
 const traffic = require("./routes/traffic")
 const user = require("./routes/user")
 
 const app = express()
 const PORT = process.env.PORT || 3000
-const DATABASE_URI = process.env.DATABASE_URI
-
-/*Database connection*/
-mongoose
-    .connect(DATABASE_URI, { useNewUrlParser: true })
-    .then(() => console.log("Connected to mongoDB Atlas."))
-    .catch(err => console.log(err))
-
 /*Logging for dev environment*/
-if (PORT === 3000) {
+if (!process.env.PORT) {
     const morgan = require("morgan")
     app.use(morgan("dev"))
 }
 
+/*Database connection*/
+mongoose
+    .connect(process.env.DATABASE_URI, {
+        useNewUrlParser: true,
+        useCreateIndex: true
+    })
+    .then(() => console.log("Connected to mongoDB Atlas."))
+    
+    .catch(err => console.log(`Error occured: ${err}`))
+
 app.use(helmet())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 
 /*Static file serving */
 app.use(express.static("public"))
